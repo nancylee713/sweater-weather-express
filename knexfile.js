@@ -4,7 +4,7 @@ module.exports = {
 
   development: {
     client: 'pg',
-    connection: 'postgres://localhost/sweater-weather_development',
+    connection: 'postgres://localhost/express_sweater_weather_dev',
     migrations: {
       directory: './db/migrations'
     },
@@ -15,7 +15,7 @@ module.exports = {
   },
   test: {
     client: 'pg',
-    connection: 'postgres://localhost/sweater-weather_test',
+    connection: 'postgres://localhost/express_sweater_weather_test',
     migrations: {
       directory: './db/migrations'
     },
