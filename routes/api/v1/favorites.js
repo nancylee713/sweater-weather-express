@@ -26,7 +26,6 @@ router.post('/', (request, response) => {
       error: `Expected format: { location: <String> }. You're missing a location property.`
     });
   }
-  
 
   database("users").where("apiKey", api_key).then(user => {
     if (user.length && typeof(location) === 'string') {
@@ -34,7 +33,7 @@ router.post('/', (request, response) => {
         .insert({ city: location, user_id: user[0].id }, "id")
         .then(res => {
           response
-            .status(201)
+            .status(200)
             .send({ message: `${location} has been added to your favorites` });
         })
     } else if (typeof location !== "string") {
