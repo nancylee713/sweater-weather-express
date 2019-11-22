@@ -18,7 +18,7 @@ Knex Local version: 0.19.5
 ```
 
 ### Schema Design
-![sweater-weather-express](https://user-images.githubusercontent.com/24424825/69408654-afc0e880-0cc4-11ea-9a34-ab99f72e62cf.png)
+![sweater-weather-express](https://user-images.githubusercontent.com/24424825/69409388-1397e100-0cc6-11ea-845b-ef57b7122582.png)
 - As shown above, there are two models, including `User` and `Favorite`. `User` has three unique attributes that are of string type (i.e., email, password, and apiKey); `Favorite` has a one-to-many relationship with `User` and has two attributes (i.e., city and user_id).
 
 
