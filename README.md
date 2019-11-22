@@ -1,5 +1,25 @@
 # Express Sweater Weather project
-This project is a JSON API built with Express framework and Node.js. The API exposes four endpoints, including retrieving detailed forecast for a given city, posting a favorite location, listing all favorite locations, and deleting an existing location. The project uses a [starter repo](https://github.com/turingschool-examples/all-your-base) from Turing School's Backend Module 4.
+This project is a JSON API built with Express framework and Node.js. The API exposes four endpoints, including retrieving detailed forecast for a given city, posting a favorite location, listing all favorite locations, and deleting an existing location. The project uses a [starter repo](https://github.com/turingschool-examples/all-your-base) from Turing School's Backend Module 4. The project board can be accessed [here](https://github.com/nancylee713/sweater-weather-express/projects/1).
+
+### Try on your local machine
+- Install required packages: run `npm install`
+- Run migrations: `knex migrate:latest`, then `knex seed:run`
+- Run tests with Jest: `npm test`
+- Run server: `npm start`
+
+
+### Versions
+```
+node 10.16.3
+express 4.16.4
+pg 7.8.0
+Knex CLI version: 0.20.1
+Knex Local version: 0.19.5
+```
+
+### Schema Design
+![sweater-weather-express](https://user-images.githubusercontent.com/24424825/69408654-afc0e880-0cc4-11ea-9a34-ab99f72e62cf.png)
+- As shown above, there are two models, including `User` and `Favorite`. `User` has three unique attributes that are of string type (i.e., email, password, and apiKey); `Favorite` has a one-to-many relationship with `User` and has two attributes (i.e., city and user_id).
 
 
 ## Getting started
@@ -14,6 +34,7 @@ body:
   "api_key": "jgn983hy48thw9begh98h4539h4"
 }
 ``` 
+
 #### 1. Retrieve forecast data for a city
 - On Postman, `GET https://express-nice-sweater-weather.herokuapp.com/api/v1/forecast?denver,co`. 
 
@@ -167,16 +188,7 @@ body:
 }
 ```
 
-### Try on your local machine
-- Install required packages: run `npm install`
-- Run migrations: `knex migrate:latest`, then `knex seed:run`
-- Run server: `npm start`
+### Core Contributors
+- Project oversight: Turing instructors
+- Peer review: Evette Telyas (see [Issue #1](https://github.com/nancylee713/sweater-weather-express/pull/1))
 
-
-### Versions
-```
-node v10.16.3
-express 4.16.4
-Knex CLI version: 0.20.1
-Knex Local version: 0.19.5
-```
