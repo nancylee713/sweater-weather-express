@@ -3,20 +3,18 @@ const yaml = require("js-yaml");
 const fs = require("fs");
 const Forecast = require("../lib/pojos/forecast");
 
+const getKey = (api) => {
+  return yaml.safeLoad(fs.readFileSync("./config.yml", "utf8"))[api];
+}
+
 const fetchCoords = async (location) => {
-        const key = await yaml.safeLoad(
-          fs.readFileSync("./config.yml", "utf8")
-        )["google_geocoding_api"];
-
+        const key = await getKey('google_geocoding_api');
+        const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${location}&key=${key}`;
+        
         try {
-          let response = await fetch(
-            `https://maps.googleapis.com/maps/api/geocode/json?address=${location}&key=${key}`
-          );
+          let response = await fetch(url);
           let geocodingData = await response.json();
-          let latLong = await geocodingData["results"][0]["geometry"][
-            "location"
-          ];
-
+          let latLong = await geocodingData["results"][0]["geometry"]["location"];
           return latLong;
         } catch (err) {
           return err;
@@ -24,17 +22,13 @@ const fetchCoords = async (location) => {
       };
 
 const fetchForecastData = async (location) => {
-        const key = await yaml.safeLoad(
-          fs.readFileSync("./config.yml", "utf8")
-        )["dark_sky_api"];
-
+        const key = await getKey("dark_sky_api");
         var lat = await fetchCoords(location).then(resp => resp["lat"]);
         var lng = await fetchCoords(location).then(resp => resp["lng"]);
+        const url = `https://api.darksky.net/forecast/${key}/${lat},${lng}?exclude=currently,minutely,flags`;
 
         try {
-          let response = await fetch(
-            `https://api.darksky.net/forecast/${key}/${lat},${lng}`
-          );
+          let response = await fetch(url);
           let forecast = await response.json();
           return forecast;
         } catch (err) {

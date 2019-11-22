@@ -1,21 +1,21 @@
 var express = require('express');
 var router = express.Router();
-
-const environment = process.env.NODE_ENV || 'development';
-const configuration = require('../../../knexfile')[environment];
-const database = require('knex')(configuration);
-
+const database = require('../../../config');
 const helper = require("../../../helpers/api_helper");
 const formatData = helper.formatData;
+
+const keyExists = (key, response) => {
+  if (key === undefined) {
+    response.send(401, "Unauthorized: missing API key");
+  }
+};
 
 router.get('/', (request, response) => {
   var api_key = request.body.api_key;
   var location = request.query.location;
 
-  if (api_key === undefined) {
-    response.send(401, "Unauthorized: missing API key");
-  }
-
+  keyExists(api_key, response);
+  
   database("users").where('apiKey', api_key).then(user => {
     if (user.length) {
       formatData(location)
