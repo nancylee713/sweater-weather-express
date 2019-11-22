@@ -76,5 +76,28 @@ router.get('/', (request, response) => {
     });
   });
 
+router.delete('/', (request, response) => {
+  var location = request.body.location;
+  var api_key = request.body.api_key;
+
+  if (api_key === undefined) {
+    response.send(401, "Unauthorized: missing API key");
+  }
+
+  if (!location) {
+    return response.status(422).send({
+      error: `Expected format: { location: <String> }. You're missing a location property.`
+    });
+  }
+
+  findUser(api_key).then(user => {
+    return database("favorites").where('user_id', user).where('city', location).del();
+  }).then(res => {
+    return response.status(204).send();
+  }).catch(error => {
+    return response.status(500).send(error);
+  });
+
+});
 
 module.exports = router;
