@@ -1,10 +1,5 @@
 var express = require("express");
 var router = express.Router();
-
-const environment = process.env.NODE_ENV || "development";
-const configuration = require("../../../knexfile")[environment];
-const database = require("knex")(configuration);
-
 const database = require('../../../config');
 var Favorite = require("../../../lib/pojos/favorite")
 
@@ -18,18 +13,8 @@ const findCities = async key => {
   let cities = await database("favorites")
     .where("user_id", uid);
   return cities;
-};
-
-router.post('/', (request, response) => {
-  var location = request.body.location;
-  var api_key = request.body.api_key;
 }
 
-  if (api_key === undefined) {
-    response.send(
-      401,
-      "Unauthorized: missing API key"
-    );
 const inputExists = (key, location, response) => {
   if (key === undefined) {
     response.status(401).send({
@@ -38,7 +23,6 @@ const inputExists = (key, location, response) => {
   }
 
   if (!location) {
-    return response.status(422).send({
     response.status(422).send({
       error: `Expected format: { location: <String> }. You're missing a location property.`
     });
@@ -54,13 +38,20 @@ router.post('/', (request, response) => {
   database("users").where("apiKey", api_key).then(user => {
     if (user.length && typeof(location) === 'string') {
       database("favorites")
-        .insert({ city: location, user_id: user[0].id }, "id")
-        .then(res => {
-          response
-            .status(200)
-            .send({ message: `${location} has been added to your favorites` });
-        })
-    } else if (typeof location !== "string") {
+        .where({user_id: user[0].id, city: location})
+        .first()
+        .then((found) => {
+          if (found) {
+            response.status(422).send(`${location} already present`);
+          } else {
+            database("favorites").insert({ city: location, user_id: user[0].id }, "id")
+                    .then(res => {
+                      response
+                        .status(200)
+                        .send({ message: `${location} has been added to your favorites` });
+                    })
+          }}
+        )} else if (typeof location !== "string") {
              response.send(422, "Location should be a string");
            } else {
              response.send(401, "Unauthorized: incorrect API key");
