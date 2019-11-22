@@ -1,7 +1,8 @@
 var express = require("express");
 var router = express.Router();
 const database = require('../../../config');
-var Favorite = require("../../../lib/pojos/favorite")
+// var Favorite = require("../../../lib/pojos/favorite")
+const x = require("../../../lib/pojos/favorite")
 
 const findUser = async (key) => {
   let users = await database("users").where({ apiKey: key });
@@ -21,9 +22,9 @@ const findCities = async key => {
   return cities;
 }
 
-const mapCities = async (key) => {
-  return await findCities(key).then(result => {
-    return result.map(city => new Favorite(city));
+const mapCities = (key) => {
+  return findCities(key).then(result => {
+    return Promise.all(result.map(city => x.getFavSummary(city)));
   });
 }
 
@@ -82,7 +83,7 @@ router.get('/', (request, response) => {
   keyExists(api_key, response);
 
   mapCities(api_key).then(result => {
-    response.status(200).json(result);
+    response.status(200).send(result);
   });
       
   });
