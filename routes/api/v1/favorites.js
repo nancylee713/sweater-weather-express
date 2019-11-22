@@ -5,6 +5,7 @@ const environment = process.env.NODE_ENV || "development";
 const configuration = require("../../../knexfile")[environment];
 const database = require("knex")(configuration);
 
+const database = require('../../../config');
 var Favorite = require("../../../lib/pojos/favorite")
 
 const findUser = async (key) => {
@@ -22,19 +23,33 @@ const findCities = async key => {
 router.post('/', (request, response) => {
   var location = request.body.location;
   var api_key = request.body.api_key;
+}
 
   if (api_key === undefined) {
     response.send(
       401,
       "Unauthorized: missing API key"
     );
+const inputExists = (key, location, response) => {
+  if (key === undefined) {
+    response.status(401).send({
+      Unauthorized: "missing API key"
+    });
   }
 
   if (!location) {
     return response.status(422).send({
+    response.status(422).send({
       error: `Expected format: { location: <String> }. You're missing a location property.`
     });
   }
+}
+
+router.post('/', (request, response) => {
+  var location = request.body.location;
+  var api_key = request.body.api_key;
+
+  inputExists(api_key, location, response);
 
   database("users").where("apiKey", api_key).then(user => {
     if (user.length && typeof(location) === 'string') {
