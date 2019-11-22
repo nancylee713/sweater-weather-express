@@ -5,10 +5,19 @@ const environment = process.env.NODE_ENV || "development";
 const configuration = require("../../../knexfile")[environment];
 const database = require("knex")(configuration);
 
-const findUser = (key) => {
-  var uid = database('users').where('apiKey', key).select('id')
-  return uid;
+var Favorite = require("../../../lib/pojos/favorite")
+
+const findUser = async (key) => {
+  let users = await database("users").where({ apiKey: key });
+  return users[0].id;
 }
+
+const findCities = async key => {
+  let uid = await findUser(key);
+  let cities = await database("favorites")
+    .where("user_id", uid);
+  return cities;
+};
 
 router.post('/', (request, response) => {
   var location = request.body.location;
@@ -45,5 +54,27 @@ router.post('/', (request, response) => {
       { error }
     });
 });
+
+router.get('/', (request, response) => {
+  var api_key = request.body.api_key;
+
+  if (api_key === undefined) {
+    response.send(
+      401,
+      "Unauthorized: missing API key"
+    );
+  }
+
+  findCities(api_key)
+    .then(cities => {
+      var cities = cities.map(obj => obj.city );
+      var result = cities.map(city => new Favorite(city));
+      return response.status(200).send(result);
+    })
+    .catch(error => {
+      return response.status(500).send(error);
+    });
+  });
+
 
 module.exports = router;
