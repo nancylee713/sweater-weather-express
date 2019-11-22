@@ -33,7 +33,7 @@ const fetchForecastData = async (location) => {
 
         try {
           let response = await fetch(
-            `https://api.darksky.net/forecast/${key}/${lat},${lng}`
+            `https://api.darksky.net/forecast/${key}/${lat},${lng}?exclude=currently,minutely,flags`
           );
           let forecast = await response.json();
           return forecast;
